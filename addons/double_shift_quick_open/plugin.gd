@@ -45,14 +45,22 @@ func _open_quick_open() -> void:
 func _on_file_chosen(path: String) -> void:
     if path.is_empty():
         return
-    match path.get_extension():
-        "tscn", "scn":
-            EditorInterface.open_scene_from_path(path)
-        "gd", "cs", "gdshader":
-            var res := load(path)
-            if res is Script:
-                EditorInterface.edit_script(res)
-            else:
-                EditorInterface.edit_resource(res)
-        _:
-            EditorInterface.edit_resource(load(path))
+    # The dialog may hand back a uid:// reference rather than a res:// path.
+    if path.begins_with("uid://"):
+        var id := ResourceUID.text_to_id(path)
+        if ResourceUID.has_id(id):
+            path = ResourceUID.get_id_path(id)
+
+    if path.get_extension() in ["tscn", "scn"]:
+        EditorInterface.open_scene_from_path(path)
+        return
+
+    var res := load(path)
+    if res == null:
+        push_warning("Double Shift Quick Open: could not load '%s'" % path)
+        return
+    if res is Script:
+        EditorInterface.set_main_screen_editor("Script")
+        EditorInterface.edit_script(res)
+    else:
+        EditorInterface.edit_resource(res)
