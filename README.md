@@ -10,3 +10,7 @@ A Godot 4.4+ editor plugin: tap **Shift twice** to open the Quick Open dialog, l
 
 1. Copy `addons/double_shift_quick_open` into your project's `addons/` folder.
 2. Enable it in **Project → Project Settings → Plugins**.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
